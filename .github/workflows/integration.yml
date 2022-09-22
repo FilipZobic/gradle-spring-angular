@@ -16,7 +16,7 @@ jobs:
       - name: Run build with Gradle wrapper
         id: gradle
         run: ./gradlew build --scan
-      - name: "Add build scan URL as PR comment"
+      - name: "Add build scan URL as PR comment (Failed)"
         uses: actions/github-script@v5
         if: github.event_name == 'pull_request' && failure()
         with:
@@ -27,4 +27,16 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: '❌ ${{ github.workflow }} failed: ${{ steps.gradle.outputs.build-scan-url }}'
+            })
+      - name: "Add build scan URL as PR comment (Succeeded)"
+        uses: actions/github-script@v5
+        if: github.event_name == 'pull_request' && success()
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ ${{ github.workflow }} Succeeded: ${{ steps.gradle.outputs.build-scan-url }}'
             })
