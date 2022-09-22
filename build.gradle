@@ -1,0 +1,78 @@
+plugins {
+	id 'org.springframework.boot' version '2.7.3'
+	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
+	id 'java'
+    id 'com.google.cloud.tools.jib' version '3.3.0'
+}
+
+group = 'io.zobic'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+// JIB
+
+// deconstruct bootRun task
+
+// Shared (local & remote)
+jib {
+	from {
+		image = 'eclipse-temurin:17-jre'
+	}
+	container {
+		ports = ['8080']
+		format = 'OCI'
+		containerizingMode = 'packaged'
+	}
+}
+// task containerize API then SPA tasks and one task called containerize depends on both doLast should be jibDockerBuild
+// Local
+tasks.named('jibDockerBuild') {
+	dependsOn {
+		tasks.named('test')
+	}
+	doFirst {
+		jib {
+			to {
+				image = 'gradle-spring-angular'
+				credHelper = 'osxkeychain'
+				tags = ['latest']
+			}
+		}
+	}
+}
+
+// Remote
+tasks.named('jib') {
+	dependsOn {
+		tasks.named('test')
+	}
+	doFirst {
+		if (!project.hasProperty('remoteRegistry')
+				|| !project.hasProperty("remoteImage")) {
+			throw new GradleException("Both 'remoteRegistry' & 'remoteImage' variables are required")
+		}
+		def remoteRegistry = project.getProperties().get("remoteRegistry")
+		def remoteImage = project.getProperties().get("remoteImage")
+		jib {
+			to {
+				image = "$remoteRegistry/$remoteImage"
+				credHelper = 'ecr-login'
+				tags = ['latest']
+			}
+		}
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-web:2.7.3'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
