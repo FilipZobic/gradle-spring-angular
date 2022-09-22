@@ -9,6 +9,13 @@ group = 'io.zobic'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
+if (hasProperty('buildScan')) {
+	buildScan {
+		termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+		termsOfServiceAgree = 'yes'
+	}
+}
+
 // JIB
 
 // deconstruct bootRun task
