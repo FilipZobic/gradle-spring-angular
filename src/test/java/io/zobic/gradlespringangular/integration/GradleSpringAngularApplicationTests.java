@@ -9,7 +9,7 @@ class GradleSpringAngularApplicationTests {
 
 	@Test
 	void contextLoads() {
-		Assertions.assertTrue(false);
+		Assertions.fail();
 	}
 
 }
