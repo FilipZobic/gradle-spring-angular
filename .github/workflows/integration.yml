@@ -58,5 +58,5 @@ jobs:
         env:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
-          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+          SONAR_PROJECTKEY: ${{ secrets.SONAR_PROJECT_KEY }}
           SONAR_LOGIN: ${{ secrets.SONAR_TOKEN }}
