@@ -1,4 +1,4 @@
-package io.zobic.gradlespringangular.integration;
+package io.zobic.gradlespringangular;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,6 +9,7 @@ class GradleSpringAngularApplicationTests {
 
 	@Test
 	void contextLoads() {
+
 	}
 
 }

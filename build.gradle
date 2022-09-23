@@ -15,10 +15,20 @@ if (hasProperty('buildScan')) {
 		termsOfServiceAgree = 'yes'
 	}
 }
+testing {
+	suites {
+		integrationTest(JvmTestSuite) {
+			dependencies {
+				implementation project
+			}
+		}
+	}
+}
+tasks.named('check') {
+	dependsOn testing.suites.integrationTest
+}
 
 // JIB
-
-// deconstruct bootRun task
 
 // Shared (local & remote)
 jib {
@@ -76,7 +86,7 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	integrationTestImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.springframework.boot:spring-boot-starter-web:2.7.3'
 }
 
