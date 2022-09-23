@@ -27,6 +27,8 @@ testing {
 		}
 	}
 }
+// check depends on integrationTest & test but test does not depend on integration test and vice
+// versa we can check this with tiTree
 tasks.named('check') {
 	dependsOn testing.suites.integrationTest
 }
@@ -43,7 +45,9 @@ tasks.named('sonarqube').configure {
 }
 
 sonarqube {
-	// we defined sonarqube connection properties in ~/gradle.properties
+	// we defined sonarqube connection properties in ~/gradle.properties or in github actions secrets and call them with -D flag
+	//	setting system properties with the -D flag
+	//	setting project properties with the -P flag
 	properties {
 //		This one returns void to closure so nothing changes (except for changing references variable)
 		properties["sonar.tests"] += sourceSets.integrationTest.allSource.srcDirs
