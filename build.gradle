@@ -43,6 +43,7 @@ jacocoTestReport {
 tasks.named('sonarqube').configure {
 	dependsOn jacocoTestReport
 }
+//Project != project one is interface one is impl System is impl
 
 sonarqube {
 	// we defined sonarqube connection properties in ~/gradle.properties or in github actions secrets and call them with -D flag
@@ -51,6 +52,21 @@ sonarqube {
 	properties {
 //		This one returns void to closure so nothing changes (except for changing references variable)
 		properties["sonar.tests"] += sourceSets.integrationTest.allSource.srcDirs
+		//property 'sonar.host.url', projectProperties.get('sonar.host.url')
+//		def projectProperties = project.getProperties()
+		if (System.getProperty("SONAR_HOST_URL") != null) {
+			properties["sonar.host.url"] = System.getProperty("SONAR_HOST_URL")
+		}
+		if (System.getProperty("SONAR_ORGANIZATION") != null) {
+			properties["sonar.organization"] = projectProperties.get("SONAR_ORGANIZATION")
+		}
+		if (System.getProperty("SONAR_PROJECT_KEY") != null) {
+			properties["sonar.projectKey"] = projectProperties.get("SONAR_PROJECT_KEY")
+		}
+
+		if (System.getProperty("SONAR_LOGIN") != null) {
+			properties["sonar.login"] = projectProperties.get("SONAR_LOGIN")
+		}
 	}
 //	Warning for gradle The one under is bad since it targets gradle global API
 //	properties["sonars.tests"] += sourceSets.integrationTest.allSource.srcDirs
