@@ -14,7 +14,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       - name: Compile
-        id: test
+        id: compile
         run: ./gradlew classes
       - name: Unit tests
         id: test
