@@ -54,10 +54,4 @@ jobs:
             })
       - name: "SonarQube Analysis"
         id: sonar-qube
-        run: ./gradlew sonarqube
-        with:
-          arguments: |
-            -Dsonar.login=${{ secrets.SONAR_HOST_URL }}
-            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew -Dsonar.login=${{ secrets.SONAR_HOST_URL }} -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.login=${{ secrets.SONAR_TOKEN }} sonarqube
