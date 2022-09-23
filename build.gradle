@@ -61,14 +61,18 @@ sonarqube {
 
 tasks.named("sonarqube") {
 	doFirst {
-		if (System.getProperty("SONAR_HOST_URL") != null)
-			property "sonar.host.url", System.getProperty("SONAR_HOST_URL")
-		if (System.getProperty("SONAR_ORGANIZATION") != null)
-			property "sonar.organization", System.getProperty("SONAR_ORGANIZATION")
-		if (System.getProperty("SONAR_PROJECTKEY") != null)
-			property "sonar.projectKey", System.getProperty("SONAR_PROJECTKEY")
-		if (System.getProperty("SONAR_LOGIN") != null)
-			property "sonar.login", System.getProperty("SONAR_LOGIN")
+		sonarqube {
+			properties {
+				if (System.getProperty("SONAR_HOST_URL") != null)
+					property "sonar.host.url", System.getProperty("SONAR_HOST_URL")
+				if (System.getProperty("SONAR_ORGANIZATION") != null)
+					property "sonar.organization", System.getProperty("SONAR_ORGANIZATION")
+				if (System.getProperty("SONAR_PROJECTKEY") != null)
+					property "sonar.projectKey", System.getProperty("SONAR_PROJECTKEY")
+				if (System.getProperty("SONAR_LOGIN") != null)
+					property "sonar.login", System.getProperty("SONAR_LOGIN")
+			}
+		}
 	}
 }
 
