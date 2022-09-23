@@ -52,6 +52,7 @@ sonarqube {
 	properties {
 //		This one returns void to closure so nothing changes (except for changing references variable)
 		properties["sonar.tests"] += sourceSets.integrationTest.allSource.srcDirs
+		property "sonar.branch.name", gitBranch()
 		//property 'sonar.host.url', projectProperties.get('sonar.host.url')
 //		def projectProperties = project.getProperties()
 	}
@@ -74,6 +75,14 @@ tasks.named("sonarqube") {
 			}
 		}
 	}
+}
+String gitBranch() {
+	String branch = ""
+	Process proc = "git rev-parse --abbrev-ref HEAD".execute()
+	proc.in.eachLine { line -> branch = line }
+	proc.err.eachLine { line -> println line }
+	proc.waitFor()
+	return branch
 }
 
 // JIB
