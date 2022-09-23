@@ -13,13 +13,19 @@ jobs:
           distribution: 'temurin'
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
+      - name: Compile
+        id: test
+        run: ./gradlew classes
       - name: Unit tests
         id: test
         run: ./gradlew test
-      - name: IntegrationTests
+      - name: Package Jar
+        id: packageJar
+        run: ./gradlew jar
+      - name: Integration Tests
         id: integrationTest
         run: ./gradlew integrationTest
-      - name: Run build with Gradle wrapper
+      - name: Build & Scan
         id: gradle
         run: ./gradlew build --scan
       - name: "Add build scan URL as PR comment (Failed)"
@@ -46,3 +52,6 @@ jobs:
               repo: context.repo.repo,
               body: '✅ ${{ github.workflow }} Succeeded: ${{ steps.gradle.outputs.build-scan-url }}'
             })
+      - name: "SonarQube analysis with Gradle wrapper"
+        id: sonar-qube
+        run: ./gradlew sonarqube
