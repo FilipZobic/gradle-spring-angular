@@ -6,8 +6,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class GradleSpringAngularApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+  private String yo;
 
+  @Test
+  void adfklscontextLoad() {
+
+
+
+
+
+    System.out.println(
+        "sldfkskldfsklfsakjadfskjdfslk;dfasjkdfajksfasdfsadafsdasdasdkldfjshkljfdsajksfadsklfadklsfasjkflaskjkladfsjkl");
+  }
 }
