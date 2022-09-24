@@ -1,5 +1,10 @@
 name: CI
-on: [push]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [ opened, synchronize, reopened ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,6 +18,9 @@ jobs:
           distribution: 'temurin'
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
+      - name: Google style check
+        id: spotlessCheck
+        run: ./gradlew spotlessCheck
       - name: Compile
         id: compile
         run: ./gradlew classes
