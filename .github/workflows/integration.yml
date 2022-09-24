@@ -21,6 +21,9 @@ jobs:
       - name: Compile
         id: compile
         run: ./gradlew classes
+      - name: Google style check
+        id: spotlessCheck
+        run: ./gradlew spotlessCheck
       - name: Unit tests
         id: test
         run: ./gradlew test
@@ -57,9 +60,6 @@ jobs:
               repo: context.repo.repo,
               body: '✅ ${{ github.workflow }} Succeeded: ${{ steps.gradle.outputs.build-scan-url }}'
             })
-      - name: Google style check
-        id: spotlessCheck
-        run: ./gradlew spotlessCheck
       - name: "SonarQube Analysis"
         id: sonar-qube
         run: ./gradlew -DSONAR_LOGIN=${{ secrets.SONAR_TOKEN }} -DSONAR_PROJECTKEY=${{ secrets.SONAR_PROJECTKEY }} -DSONAR_ORGANIZATION=${{ secrets.SONAR_ORGANIZATION }} -DSONAR_HOST_URL=${{ secrets.SONAR_HOST_URL }} sonarqube
