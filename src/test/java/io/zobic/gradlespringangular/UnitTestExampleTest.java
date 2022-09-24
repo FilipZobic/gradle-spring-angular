@@ -5,7 +5,5 @@ import org.junit.jupiter.api.Test;
 public class UnitTestExampleTest {
 
   @Test
-  void hello() {
-
-  }
+  void hello() {}
 }

@@ -11,10 +11,6 @@ class GradleSpringAngularApplicationTests {
   @Test
   void adfklscontextLoad() {
 
-
-
-
-
     System.out.println(
         "sldfkskldfsklfsakjadfskjdfslk;dfasjkdfajksfasdfsadafsdasdasdkldfjshkljfdsajksfadsklfadklsfasjkflaskjkladfsjkl");
   }
