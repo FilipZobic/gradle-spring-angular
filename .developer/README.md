@@ -23,9 +23,9 @@ action `Prefrences -> Tools -> Save On Actions -> Enable: Reformat Code, Optimiz
 
 **NOTE! You could work without the plugin & save actions and at the end just run command 2.**
 
-1. To check formatting run: `./gradlew precommit spotlessCheck`
+1. To check formatting run: `./gradlew spotlessCheck`
 
-2. To fix formatting issues project scope run: `./gradlew precommit spotlessApply`
+2. To fix formatting issues project scope run: `./gradlew spotlessApply`
 
 ## Tools
 
