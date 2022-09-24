@@ -19,106 +19,107 @@ tasks.create("precommit") {
 }
 
 if (hasProperty('buildScan')) {
-	buildScan {
-		termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-		termsOfServiceAgree = 'yes'
-	}
+    buildScan {
+        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+        termsOfServiceAgree = 'yes'
+    }
 }
 testing {
-	suites {
-		integrationTest(JvmTestSuite) {
-			dependencies {
-				implementation project
-			}
-		}
-	}
+    suites {
+        integrationTest(JvmTestSuite) {
+            dependencies {
+                implementation project
+            }
+        }
+    }
 }
 // check depends on integrationTest & test but test does not depend on integration test and vice
 // versa we can check this with tiTree
 tasks.named('check') {
-	dependsOn testing.suites.integrationTest
+    dependsOn testing.suites.integrationTest
 }
 jacocoTestReport {
-	executionData integrationTest
-	reports {
-		xml.required = true
-	}
-	dependsOn test, integrationTest
+    executionData integrationTest
+    reports {
+        xml.required = true
+    }
+    dependsOn test, integrationTest
 }
 
 tasks.named('sonarqube').configure {
-	dependsOn jacocoTestReport
+    dependsOn jacocoTestReport
 }
 //Project != project one is interface one is impl System is impl
 
 sonarqube {
-	// we defined sonarqube connection properties in ~/gradle.properties or in github actions secrets and call them with -D flag
-	//	setting system properties with the -D flag
-	//	setting project properties with the -P flag
-	properties {
+    // we defined sonarqube connection properties in ~/gradle.properties or in github actions secrets and call them with -D flag
+    //	setting system properties with the -D flag
+    //	setting project properties with the -P flag
+    properties {
 //		This one returns void to closure so nothing changes (except for changing references variable)
-		properties["sonar.tests"] += sourceSets.integrationTest.allSource.srcDirs
-		property "sonar.branch.name", gitBranch()
-		//property 'sonar.host.url', projectProperties.get('sonar.host.url')
+        properties["sonar.tests"] += sourceSets.integrationTest.allSource.srcDirs
+        property "sonar.branch.name", gitBranch()
+        //property 'sonar.host.url', projectProperties.get('sonar.host.url')
 //		def projectProperties = project.getProperties()
-	}
+    }
 //	Warning for gradle The one under is bad since it targets gradle global API
 //	properties["sonars.tests"] += sourceSets.integrationTest.allSource.srcDirs
 }
 
 tasks.named("sonarqube") {
-	doFirst {
-		sonarqube {
-			properties {
-				if (System.getProperty("SONAR_HOST_URL") != null)
-					property "sonar.host.url", System.getProperty("SONAR_HOST_URL")
-				if (System.getProperty("SONAR_ORGANIZATION") != null)
-					property "sonar.organization", System.getProperty("SONAR_ORGANIZATION")
-				if (System.getProperty("SONAR_PROJECTKEY") != null)
-					property "sonar.projectKey", System.getProperty("SONAR_PROJECTKEY")
-				if (System.getProperty("SONAR_LOGIN") != null)
-					property "sonar.login", System.getProperty("SONAR_LOGIN")
-			}
-		}
-	}
+    doFirst {
+        sonarqube {
+            properties {
+                if (System.getProperty("SONAR_HOST_URL") != null)
+                    property "sonar.host.url", System.getProperty("SONAR_HOST_URL")
+                if (System.getProperty("SONAR_ORGANIZATION") != null)
+                    property "sonar.organization", System.getProperty("SONAR_ORGANIZATION")
+                if (System.getProperty("SONAR_PROJECTKEY") != null)
+                    property "sonar.projectKey", System.getProperty("SONAR_PROJECTKEY")
+                if (System.getProperty("SONAR_LOGIN") != null)
+                    property "sonar.login", System.getProperty("SONAR_LOGIN")
+            }
+        }
+    }
 }
+
 String gitBranch() {
-	String branch = ""
-	Process proc = "git rev-parse --abbrev-ref HEAD".execute()
-	proc.in.eachLine { line -> branch = line }
-	proc.err.eachLine { line -> println line }
-	proc.waitFor()
-	return branch
+    String branch = ""
+    Process proc = "git rev-parse --abbrev-ref HEAD".execute()
+    proc.in.eachLine { line -> branch = line }
+    proc.err.eachLine { line -> println line }
+    proc.waitFor()
+    return branch
 }
 
 // JIB
 
 // Shared (local & remote)
 jib {
-	from {
-		image = 'eclipse-temurin:17-jre'
-	}
-	container {
-		ports = ['8080']
-		format = 'OCI'
-		containerizingMode = 'packaged'
-	}
+    from {
+        image = 'eclipse-temurin:17-jre'
+    }
+    container {
+        ports = ['8080']
+        format = 'OCI'
+        containerizingMode = 'packaged'
+    }
 }
 // task containerize API then SPA tasks and one task called containerize depends on both doLast should be jibDockerBuild
 // Local
 tasks.named('jibDockerBuild') {
-	dependsOn {
-		tasks.named('test')
-	}
-	doFirst {
-		jib {
-			to {
-				image = 'gradle-spring-angular'
-				credHelper = 'osxkeychain'
-				tags = ['latest']
-			}
-		}
-	}
+    dependsOn {
+        tasks.named('test')
+    }
+    doFirst {
+        jib {
+            to {
+                image = 'gradle-spring-angular'
+                credHelper = 'osxkeychain'
+                tags = ['latest']
+            }
+        }
+    }
 }
 
 spotless {
@@ -139,37 +140,37 @@ spotless {
 
 // Remote
 tasks.named('jib') {
-	dependsOn {
-		tasks.named('test')
-	}
-	doFirst {
-		if (!project.hasProperty('remoteRegistry')
-				|| !project.hasProperty("remoteImage")) {
-			throw new GradleException("Both 'remoteRegistry' & 'remoteImage' variables are required")
-		}
-		def remoteRegistry = project.getProperties().get("remoteRegistry")
-		def remoteImage = project.getProperties().get("remoteImage")
-		jib {
-			to {
-				image = "$remoteRegistry/$remoteImage"
-				credHelper = 'ecr-login'
-				tags = ['latest']
-			}
-		}
-	}
+    dependsOn {
+        tasks.named('test')
+    }
+    doFirst {
+        if (!project.hasProperty('remoteRegistry')
+                || !project.hasProperty("remoteImage")) {
+            throw new GradleException("Both 'remoteRegistry' & 'remoteImage' variables are required")
+        }
+        def remoteRegistry = project.getProperties().get("remoteRegistry")
+        def remoteImage = project.getProperties().get("remoteImage")
+        jib {
+            to {
+                image = "$remoteRegistry/$remoteImage"
+                credHelper = 'ecr-login'
+                tags = ['latest']
+            }
+        }
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	integrationTestImplementation 'org.springframework.boot:spring-boot-starter-test'
-	implementation 'org.springframework.boot:spring-boot-starter-web:2.7.3'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    integrationTestImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.7.3'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
