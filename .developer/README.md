@@ -21,9 +21,11 @@ Enable the plugin `Preferences -> google-java-format-settings -> Enable google-j
 Enable Save-On
 action `Prefrences -> Tools -> Save On Actions -> Enable: Reformat Code, Optimize Imports, Rearange code`
 
-To check formatting run: `./gradlew precommit spotlessCheck`
+**NOTE! You could work without the plugin & save actions and at the end just run command 2.**
 
-To fix formatting issues project scope run: `./gradlew precommit spotlessApply`
+1. To check formatting run: `./gradlew precommit spotlessCheck`
+
+2. To fix formatting issues project scope run: `./gradlew precommit spotlessApply`
 
 ## Tools
 
