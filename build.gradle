@@ -13,6 +13,11 @@ group = 'io.zobic'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
+tasks.create("precommit") {
+    dependsOn tasks.named('spotlessCheck'), tasks.named('sonarqube')
+    tasks.findByName("sonarqube").mustRunAfter "spotlessCheck"
+}
+
 if (hasProperty('buildScan')) {
 	buildScan {
 		termsOfServiceUrl = 'https://gradle.com/terms-of-service'
