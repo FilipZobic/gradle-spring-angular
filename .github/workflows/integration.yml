@@ -1,5 +1,10 @@
 name: CI
-on: [pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [ opened, synchronize, reopened ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,12 +18,27 @@ jobs:
           distribution: 'temurin'
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
-      - name: Run build with Gradle wrapper
+      - name: Compile
+        id: compile
+        run: ./gradlew classes
+      - name: Google style check
+        id: spotlessCheck
+        run: ./gradlew spotlessCheck
+      - name: Unit tests
+        id: test
+        run: ./gradlew test
+      - name: Package Jar
+        id: packageJar
+        run: ./gradlew jar
+      - name: Integration Tests
+        id: integrationTest
+        run: ./gradlew integrationTest
+      - name: Build & Scan
         id: gradle
         run: ./gradlew build --scan
       - name: "Add build scan URL as PR comment (Failed)"
         uses: actions/github-script@v5
-        if: github.event_name == 'pull_request' && failure()
+        if: github.event_name == 'pull_request' && failure() && steps.gradle.outputs.exit_code == 0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -30,7 +50,7 @@ jobs:
             })
       - name: "Add build scan URL as PR comment (Succeeded)"
         uses: actions/github-script@v5
-        if: github.event_name == 'pull_request' && success()
+        if: github.event_name == 'pull_request' && success() && steps.gradle.outputs.exit_code == 0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -40,3 +60,12 @@ jobs:
               repo: context.repo.repo,
               body: '✅ ${{ github.workflow }} Succeeded: ${{ steps.gradle.outputs.build-scan-url }}'
             })
+      - name: "SonarQube Analysis"
+        id: sonar-qube
+        run: ./gradlew -DSONAR_LOGIN=${{ secrets.SONAR_TOKEN }} -DSONAR_PROJECTKEY=${{ secrets.SONAR_PROJECTKEY }} -DSONAR_ORGANIZATION=${{ secrets.SONAR_ORGANIZATION }} -DSONAR_HOST_URL=${{ secrets.SONAR_HOST_URL }} sonarqube
+
+#        env:
+#          SONAR_HOST_URL:
+#          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+#          SONAR_PROJECTKEY: ${{ secrets.SONAR_PROJECTKEY }}
+#          SONAR_LOGIN: ${{ secrets.SONAR_TOKEN }}

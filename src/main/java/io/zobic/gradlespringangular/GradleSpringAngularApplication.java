@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class GradleSpringAngularApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(GradleSpringAngularApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(GradleSpringAngularApplication.class, args);
+  }
 }
